@@ -56,22 +56,31 @@ make test-fastapi
 
 ## Usage Examples
 
-### Shorten a URL
+### 1. Shorten a URL
+
 ```bash
 curl -X POST http://localhost:8000/api/shorten \
   -H "Content-Type: application/json" \
   -d '{"url": "https://example.com"}'
 ```
 
-### Get all URLs
+![Shorten URL API Response](screenshots/api_shorten_api.png)
+
+### 2. Get all URLs
+
 ```bash
 curl http://localhost:8000/api/urls
 ```
 
-### Redirect (use short code from shorten response)
+![Get All URLs API Response](screenshots/get_all_urls_api.png)
+
+### 3. Redirect to Original URL
+
 ```bash
 curl -L http://localhost:8000/abc12345
 ```
+
+![Open Shorten URL - Redirect Response](screenshots/open_shorten_url.png)
 
 ## Project Structure
 
