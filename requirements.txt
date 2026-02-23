@@ -1,0 +1,19 @@
+# Shared and Flask
+flask>=2.3.0
+flask-sqlalchemy>=3.0.0
+
+# Django
+django>=4.2.0
+
+# FastAPI
+fastapi>=0.100.0
+uvicorn[standard]>=0.22.0
+
+# SQLAlchemy (for Flask and FastAPI)
+sqlalchemy>=2.0.0
+
+# Testing
+pytest>=7.4.0
+pytest-django>=4.5.0
+requests>=2.31.0
+httpx>=0.24.0
