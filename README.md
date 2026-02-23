@@ -25,7 +25,7 @@ make install   # Creates venv and installs dependencies
 
 ## Running the App
 
-All versions run on **port 8000**.
+All versions run on **port 8002-8004**.
 
 ### Flask
 ```bash
