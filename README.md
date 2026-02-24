@@ -25,22 +25,18 @@ make install   # Creates venv and installs dependencies
 
 ## Running the App
 
-All versions run on **port 8002-8004**.
-
-### Flask
+### Run all 3 apps together (background)
 ```bash
-make run-flask
+make run-all    # Starts Flask (8002), Django (8003), FastAPI (8004)
+make stop-all   # Stops all servers
 ```
 
-### Django
-```bash
-make run-django
-```
-
-### FastAPI
-```bash
-make run-fastapi
-```
+### Run individually (foreground)
+| Framework | Port | Command |
+|-----------|------|---------|
+| Flask | 8002 | `make run-flask` |
+| Django | 8003 | `make run-django` |
+| FastAPI | 8004 | `make run-fastapi` |
 
 ## Running Tests
 
