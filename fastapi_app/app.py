@@ -6,8 +6,8 @@ import time
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from fastapi import FastAPI, HTTPException, Depends
-from fastapi.responses import RedirectResponse
+from fastapi import FastAPI, HTTPException, Depends, Request
+from fastapi.responses import RedirectResponse, HTMLResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -15,6 +15,39 @@ from common.utils import short_code, is_valid_url
 from fastapi_app.models import ShortenUrl, get_db
 
 app = FastAPI(title="URL Shortener API")
+
+
+@app.get("/", response_class=HTMLResponse)
+def home(request: Request, db: Session = Depends(get_db)):
+    """Home page with API documentation and shortened URLs."""
+    base = str(request.base_url).rstrip('/')
+    urls = db.query(ShortenUrl).order_by(ShortenUrl.created_at.desc()).all()
+    url_rows = ''.join(
+        f'<tr><td>{u.short_code}</td><td><a href="{u.original_url}" target="_blank">{u.original_url[:60]}{"..." if len(u.original_url) > 60 else ""}</a></td><td><a href="{base}/{u.short_code}">{base}/{u.short_code}</a></td></tr>'
+        for u in urls
+    ) or '<tr><td colspan="3">No shortened URLs yet.</td></tr>'
+    return f'''<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>URL Shortener - FastAPI</title>
+<style>body{{font-family:system-ui,sans-serif;max-width:800px;margin:2rem auto;padding:0 1rem}}h1{{color:#333}}code{{background:#f4f4f4;padding:2px 6px;border-radius:4px}}table{{width:100%;border-collapse:collapse}}th,td{{padding:8px;text-align:left;border-bottom:1px solid #ddd}}th{{background:#f8f8f8}}</style>
+</head>
+<body>
+<h1>🔗 URL Shortener API</h1>
+<p><strong>Framework:</strong> FastAPI</p>
+<p>Shorten long URLs and redirect using compact short codes. Built with FastAPI, SQLAlchemy, and SQLite.</p>
+
+<h2>Available API Endpoints</h2>
+<table>
+<tr><th>Method</th><th>Endpoint</th><th>Description</th></tr>
+<tr><td><code>GET</code></td><td><a href="{base}/api/urls">{base}/api/urls</a></td><td>Get all shortened URLs (JSON)</td></tr>
+<tr><td><code>POST</code></td><td><a href="{base}/api/shorten">{base}/api/shorten</a></td><td>Shorten a URL (body: {"{ \"url\": \"https://example.com\" }"})</td></tr>
+<tr><td><code>GET</code></td><td><code>{base}/&#123;short_code&#125;</code></td><td>Redirect to original URL</td></tr>
+</table>
+
+<h2>Shortened URLs</h2>
+<table><tr><th>Short Code</th><th>Original URL</th><th>Short Link</th></tr>{url_rows}</table>
+</body>
+</html>'''
 
 
 class ShortenRequest(BaseModel):
